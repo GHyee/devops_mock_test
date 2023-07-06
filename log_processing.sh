@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Log directory
-log_directory="/path/to/logs"
+log_directory="logs"
 
 # Filtered log directory
-filtered_log_directory="/path/to/filtered_logs"
+filtered_log_directory="filtered_logs"
 
 # Log level threshold (1: INFO, 2: Warning, 3: ERROR)
 log_level_threshold=2
@@ -51,14 +51,16 @@ mkdir -p "$filtered_log_directory"
 log_files=$(find "$log_directory" -type f -name "*.log")
 
 # Loop through each log file
+log_file_counter=0
+log_entry_counter=0
 for log_file in $log_files; do
-    echo "Processing $log_file"
-
+    log_file_counter=$((log_file_counter+1))
     # Extract the timestamps and log levels from the log file
     log_entries=$(grep -E '([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).*(INFO|Warning|ERROR)' "$log_file")
 
     # Loop through each log entry and filter based on the log level threshold
     while IFS= read -r log_entry; do
+        log_entry_counter=$((log_entry_counter+1))
         timestamp=$(echo "$log_entry" | grep -Eo '[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}')
         log_level=$(echo "$log_entry" | grep -Eo 'INFO|Warning|ERROR')
 
@@ -78,18 +80,17 @@ for log_file in $log_files; do
                 ;;
         esac
         
-        echo "File: $log_file, Timestamp: $timestamp, Log Level: $log_level Value: $log_level_value Thres: $log_level_threshold" 
+        echo "File: $log_file, Timestamp: $timestamp, Log Level: $log_level" 
 
         # Filter out logs with a log level higher than or equal to the threshold
         if [[ $log_level_value -le $log_level_threshold ]]; then
             # Create the filtered log file based on the log level threshold
-            filtered_log_file="$filtered_log_directory/${log_level_threshold}_logs.log"
+            filtered_log_file="$filtered_log_directory/filtered.log"
 
             # Append the filtered log entry to the filtered log file, including the log file name
             echo "File: $log_file, Timestamp: $timestamp, Log Level: $log_level" >> "$filtered_log_file"
         fi
     done <<< "$log_entries"
-
-    echo "Finished processing $log_file"
-    echo
 done
+echo "Finished processing $log_file_counter log files and $log_entry_counter log entries."
+echo
