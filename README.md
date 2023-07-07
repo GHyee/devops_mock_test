@@ -12,8 +12,21 @@ log level higher than or equal to a specified threshold. For e.g. "Warning".
 ## Usage
 ## Generating Logs
 You can use a python tool to generate logs and store them in a specific directory.
+The below code will generate 10 logfiles of 10 entries and store them in the directory `logs/`.
 ```
-python -m generate_logs -d logs/
+python -m generate_logs logs/ -n 10 -l 10
+```
+Sample output:
+```bash
+❯ python -m generate_logs logs/ -n 10 -l 10
+Sample log file generated: logs/sample_log_1.log
+Sample log file generated: logs/sample_log_2.log
+Sample log file generated: logs/sample_log_3.log
+...
+Sample log file generated: logs/sample_log_8.log
+Sample log file generated: logs/sample_log_9.log
+Sample log file generated: logs/sample_log_10.log
+
 ```
 
 ## Extracting attributes and Filtering log entries
@@ -26,3 +39,17 @@ To extract the attributes from the logs,
 Note:
 - Make sure to replace `logs/` with the actual directory path where your log files are located.
 - To filter logs, adjust the `filtered_logs/warning` and `Warning` value as per the filter requirements.
+- To filter logs, adjust the `filtered_logs/warning` and `Warning` value as per the filter requirements.
+
+Sample output:
+```bash
+❯ ./log_processing.sh logs filtered_logs Warning
+File: logs/sample_log_1.log, Timestamp: 2023-07-07 15:23:00, Log Level: INFO
+File: logs/sample_log_1.log, Timestamp: 2023-07-07 15:23:00, Log Level: INFO
+File: logs/sample_log_1.log, Timestamp: 2023-07-07 15:23:00, Log Level: ERROR
+...
+File: logs/sample_log_8.log, Timestamp: 2023-07-07 15:23:00, Log Level: INFO
+File: logs/sample_log_8.log, Timestamp: 2023-07-07 15:23:00, Log Level: INFO
+File: logs/sample_log_8.log, Timestamp: 2023-07-07 15:23:00, Log Level: Warning
+Finished processing 10 log files and 100 log entries.
+```
